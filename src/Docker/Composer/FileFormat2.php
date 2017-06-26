@@ -1,7 +1,9 @@
 <?php
 
 namespace Docker\Composer;
-use Extension;
+use Symfony\Component\Yaml\Yaml;
+
+use Exception;
 
 class NetworkService{
 	protected $name;
@@ -654,16 +656,18 @@ class Service{
 		$this->config["working_dir"] = $working_dir;
 		return $this;
 	}
+
+	function getConfig(){ return $this->config;}
 }
 
-class ServiceNotFoundException extends Extension
+class ServiceNotFoundException extends \Exception
 {
 	function __construct($name){
 		parent::__construct("Service $name not found");
 	}
 }
 
-class FileFormat2 
+class FileFormat2
 {
 	/**
          * path of the docker-compose.yml
@@ -686,6 +690,14 @@ class FileFormat2
 		if(!$this->services[$name]) throw new ServiceNotFoundException($name);
 		return $this->services[$name];
         }
+
+	function render(){
+		$rtr = array("version" => "2.2", "services" => array());
+		foreach($this->services as $name => $service){
+			$rtr["services"][$name] = $service->getConfig();
+		}
+		return  Yaml::dump($rtr, 3, 2);
+	}
 }
 
 
