@@ -21,7 +21,9 @@ class NetworkService{
 	}
 
 	function addAlias($alias){
-		if(!is_array($this->config["aliases"])) $this->config["aliases"] = array();
+		if(!isset($this->config["aliases"]) OR !is_array($this->config["aliases"])) 
+			$this->config["aliases"] = array();
+
 		$this->config["aliases"][] = $alias;
 		return $this;
 	}
@@ -48,7 +50,9 @@ class NetworkService{
 		return $this;
 	}
 	function addLink_local_ips($link_local_ip){
-		if(!is_array($this->config["link_local_ips"])) $this->config["link_local_ips"] = array();
+		if(!isset($this->config["link_local_ip"]) OR !is_array($this->config["link_local_ips"])) 
+			$this->config["link_local_ips"] = array();
+
 		$this->config["link_local_ips"][] = $link_local_ip;
 		return $this;
 	}
@@ -72,14 +76,14 @@ class Service{
 	protected $cap_drop;
 
 	function capAdd($name){
-		if(!is_array($this->config["cap_add"])) $this->config["cap_add"] = array();
+		if(!isset($this->config["cap_add"]) OR !is_array($this->config["cap_add"])) $this->config["cap_add"] = array();
 		$this->$config["cap_add"][] = $name;
 
 		return $this;
         }
 
 	function capDrop($name){
-		if(!is_array($this->config["cap_drop"])) $this->config["cap_drop"] = array();
+		if(!isset($this->config["cap_drop"]) OR !is_array($this->config["cap_drop"])) $this->config["cap_drop"] = array();
 		$this->$config["cap_drop"][] = $name;
 
 		return $this;
@@ -88,11 +92,14 @@ class Service{
 	function getCapAdd(){ return $this->config["cap_add"]; }
 	function getCapDrop(){ return $this->config["cap_drop"]; }
 
-	function buid($context, $dockerfile = null, $args = array()){
-		$this->config["build"] = 
-			  array('context'=> $context,
-				'dockerfile' => $dockerfile,
-				'args' => $args);
+	function build($context, $dockerfile = null, $args = array()){
+		$this->config["build"] = array('context'=> $context);
+		if(!is_null($dockerfile))
+			$this->config["build"]['dockerfile'] = $dockerfile;
+		if(!empty($args)){
+			$this->config["build"]['args'] = $args;
+		}
+
 		return $this;
         }
 
@@ -144,7 +151,7 @@ class Service{
 	}
 
 	function addDepends_on($service){
-		if(!is_array($this->config["depends_on"])) $this->config["depends_on"] = array();
+		if(!isset($this->config["depends_on"]) OR !is_array($this->config["depends_on"])) $this->config["depends_on"] = array();
 		$this->config["depends_on"][] = $service;
 		return $this;
 	}
@@ -158,7 +165,7 @@ class Service{
 	}
 
 	function addDns($dns){
-		if(!is_array($this->config["dns"])) $this->config["dns"] = array();
+		if(!isset($this->config["dns"]) OR !is_array($this->config["dns"])) $this->config["dns"] = array();
 		$this->config["dns"][] = $dns;
 		return $this;
 	}
@@ -181,7 +188,7 @@ class Service{
 	}
 
 	function addDns_search($dns_search){
-		if(!is_array($this->config["dns_search"])) $this->config["dns_search"] = array();
+		if(!isset($this->config["dns_search"]) OR !is_array($this->config["dns_search"])) $this->config["dns_search"] = array();
 		$this->config["dns_search"][] = $dns_search;
 		return $this;
 	}
@@ -195,7 +202,7 @@ class Service{
 	}
 
 	function addTmpfs($tmpfs){
-		if(!is_array($this->config["tmpfs"])) $this->config["tmpfs"] = array();
+		if(!isset($this->config["tmpfs"]) OR !is_array($this->config["tmpfs"])) $this->config["tmpfs"] = array();
 		$this->config["tmpfs"][] = $tmpfs;
 		return $this;
 	}
@@ -218,7 +225,7 @@ class Service{
 	}
 
 	function addEnv_file($env_file){
-		if(!is_array($this->config["env_file"])) $this->config["env_file"] = array();
+		if(!isset($this->config["env_file"]) OR !is_array($this->config["env_file"])) $this->config["env_file"] = array();
 		$this->config["env_file"][] = $env_file;
 		return $this;
 	}
@@ -238,7 +245,7 @@ class Service{
 	}
 
 	function addEnviroment($var, $value){
-		if(!is_array($this->config["environment"])) $this->config["environment"] = array();
+		if(!isset($this->config["environment"]) OR !is_array($this->config["environment"])) $this->config["environment"] = array();
 		$this->config["environment"][] = $var . "=" . $value;  
 		return $this;
 	}
@@ -252,7 +259,7 @@ class Service{
 	}
 
 	function addExpose($from, $to){
-		if(!is_array($this->config["expose"])) $this->config["expose"] = array();
+		if(!isset($this->config["expose"]) OR !is_array($this->config["expose"])) $this->config["expose"] = array();
 		$this->config["expose"][] = $from. ":" . $to;  
 		return $this;
 	}
@@ -265,6 +272,7 @@ class Service{
 		if($file){
 			$this->config["extends"]["file"] = $file;
 		}
+		return $this;
 	}
 
         /**
@@ -276,7 +284,7 @@ class Service{
 	}
 
 	function addExternal_links($from, $to = null){
-		if(!is_array($this->config["external_links"])) $this->config["external_links"] = array();
+		if(!isset($this->config["external_links"]) OR !is_array($this->config["external_links"])) $this->config["external_links"] = array();
 		if(!$to){
 			$this->config["external_links"][] = $from;  
 		}else{
@@ -294,7 +302,7 @@ class Service{
 	}
 
 	function addExtra_hosts($from, $to){
-		if(!is_array($this->config["extra_hosts"])) $this->config["extra_hosts"] = array();
+		if(!isset($this->config["extra_hosts"]) OR !is_array($this->config["extra_hosts"])) $this->config["extra_hosts"] = array();
 		$this->config["extra_hosts"][] = $from. ":" . $to;  
 		return $this;
 	}
@@ -304,7 +312,7 @@ class Service{
         * TODO : addGroup_add ? and reset the config[group_add] entry with this method?
         */
 	function group_add($group_add){
-		if(!is_array($this->config["egroup_add"])) $this->config["group_add"] = array();
+		if(!isset($this->config["extra_hosts"]) OR !is_array($this->config["egroup_add"])) $this->config["group_add"] = array();
 		$this->config["group_add"] = $this->config["group_add"] + array_values((array)$group_add);
 		return $this;
 	}
@@ -359,7 +367,7 @@ class Service{
 	}
 
 	function addLabels($label, $value){
-		if(!is_array($this->config["labels"])) $this->config["labels"] = array();
+		if(!isset($this->config["labels"]) OR !is_array($this->config["labels"])) $this->config["labels"] = array();
 		$this->config["labels"][$label] = $value;
 		return $this;
 	}
@@ -371,9 +379,13 @@ class Service{
 		$this->config["links"] = array_values((array)$links);
 		return $this;
 	}
-	function addLinks($source, $dest){
-		if(!is_array($this->config["links"])) $this->config["links"] = array();
-		$this->config["links"][] = $source . ":" . $dest;
+	function addLinks($source, $dest=false){
+		if(!isset($this->config["links"]) OR !is_array($this->config["links"])) $this->config["links"] = array();
+		if(!$dest){
+			$this->config["links"][] = $source;
+		}else{
+			$this->config["links"][] = $source . ":" . $dest;
+		}
 		return $this;
 	}
 
@@ -434,7 +446,7 @@ class Service{
 	}
 
 	function addPorts($from, $to = false){
-		if(!is_array($this->config["ports"])) $this->config["ports"] = array();
+		if(!isset($this->config["ports"]) OR !is_array($this->config["ports"])) $this->config["ports"] = array();
 		if(!$to){
 			$this->config["ports"][] = $from;
 		}else{
@@ -452,8 +464,8 @@ class Service{
 	}
 
 	function addSecurity_opt($security_opt){
-		if(!is_array($this->config["security_opt"])) $this->config["security_opt"] = array();
-		$this->config["ports"][] = $security_opt;
+		if(!isset($this->config["security_opt"]) OR !is_array($this->config["security_opt"])) $this->config["security_opt"] = array();
+		$this->config["security_opt"][] = $security_opt;
 		return $this;
 	}
 
@@ -483,7 +495,7 @@ class Service{
 	}
 
 	function addSysctls($sysctl, $value){
-		if(!is_array( $this->config["sysctls"])) $this->config["sysctls"] = array();
+		if(!isset($this->config["sysctls"]) OR !is_array( $this->config["sysctls"])) $this->config["sysctls"] = array();
 		$this->config["sysctls"][] = $sysctls . "=" . $value;
 		return $this;
 	}
@@ -492,7 +504,7 @@ class Service{
         * ulimits
         */
 	function ulimits($ulimit, $config){
-		if(!is_array( $this->config["ulimits"])) $this->config["ulimits"] = array();
+		if(!isset($this->config["ulimits"]) OR !is_array( $this->config["ulimits"])) $this->config["ulimits"] = array();
 		$this->config["ulimits"][$ulimit] = $config;
 		return $this;
 	}
@@ -516,7 +528,7 @@ class Service{
 	}
 
 	function addVolumes($from, $to = false){
-		if(!is_array($this->config["volumes"])) $this->config["volumes"] = array();
+		if(!isset($this->config["volumes"]) OR !is_array($this->config["volumes"])) $this->config["volumes"] = array();
 		if(!$to){
 			$this->config["volumes"][] = $from;  
 		}else{
@@ -539,7 +551,7 @@ class Service{
 	}
 
 	function addVolumes_from($volumes_from){
-		if(!is_array($this->config["volumes_from"])) $this->config["volumes_from"] = array();
+		if(!isset($this->config["volumes_from"]) OR !is_array($this->config["volumes_from"])) $this->config["volumes_from"] = array();
 		$this->config["volumes_from"][] = $volumes_from;
 		return $this;
 	}
@@ -682,8 +694,8 @@ class FileFormat2
         }
 
 	function addService($name){
- 		$this->services[$name] = new Service($name);     		
-		return $this->services[$name];
+ 		$this->services[$name] = $s = new Service($name);
+		return $s;
         }
 
 	function service($name){
@@ -696,7 +708,7 @@ class FileFormat2
 		foreach($this->services as $name => $service){
 			$rtr["services"][$name] = $service->getConfig();
 		}
-		return  Yaml::dump($rtr, 3, 2);
+		return  Yaml::dump($rtr, 5, 2);
 	}
 }
 
