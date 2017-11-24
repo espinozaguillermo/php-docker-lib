@@ -710,6 +710,8 @@ class FileFormat2
 		}
 		return  Yaml::dump($rtr, 5, 2);
 	}
+
+        function getServices(){ return $this->services; }
 }
 
 
