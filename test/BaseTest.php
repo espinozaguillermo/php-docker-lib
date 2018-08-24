@@ -19,16 +19,24 @@ class BaseTest extends TestCase
 	$composer->addService("Ftth")->image("ubuntu:17.10");
 	$composer->addService("ubuntu")->image("ubuntu");
 	$composer->addService("custom")->build("./custom");
-	
-	$rtr = Yaml::parse($composer->render());
-	$this->assertEquals(array ( 
-		   "version"=> "2.2",
-		  "services" => array ( "Base" => array("image" => "ubuntu:16.10"),
-					"Ftth" => array ( "image" => "ubuntu:17.10"),
-					"ubuntu" => array ( "image" => "ubuntu"),
-					"custom" => array ( "build" => array("context" => "./custom")),
-				)
-	), $rtr);
+	$composer->addService("test1")->build("./custom1")->addVolumes('volumen_test1_test2', '/opt/test1');
+        $composer->addService("test2")->build("./custom2")->addVolumes('volumen_test1_test2', '/opt/test2');
     
+        $composer->getVolumes()->addVolumen('volumen_test1_test2', 'local');
+
+	$rtr = Yaml::parse($composer->render());
+        $this->assertEquals(
+            array ( 
+                "version"=> "2.2",
+                "services" => array ( 
+                    "Base" => array("image" => "ubuntu:16.10"),
+                    "Ftth" => array ( "image" => "ubuntu:17.10"),
+                    "ubuntu" => array ( "image" => "ubuntu"),
+                    "custom" => array ( "build" => array("context" => "./custom")),
+                    "test1" => array ( "build" => array("context" => "./custom1"),"volumes" => array('volumen_test1_test2:/opt/test1')),
+                    "test2" => array ( "build" => array("context" => "./custom2"),"volumes" => array('volumen_test1_test2:/opt/test2')),
+                ),
+                "volumes" => array('volumen_test1_test2' => array('driver' => 'local'))
+            ), $rtr);    
     }
 }
