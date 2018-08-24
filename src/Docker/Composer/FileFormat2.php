@@ -687,10 +687,15 @@ class FileFormat2
 	protected $path;
 
         protected $services;
+        /**
+         * Volumen config.
+         */ 
+        protected $volumes;
 
 	function __construct($path = "."){
 		$this->path = $path;
 		$this->services = array();
+		$this->volumes = new Volumes();
         }
 
 	function addService($name){
@@ -708,10 +713,39 @@ class FileFormat2
 		foreach($this->services as $name => $service){
 			$rtr["services"][$name] = $service->getConfig();
 		}
+                
+		foreach($this->volumes->getConfig() as $name => $volumen){
+                        $rtr["volumes"][$name] = $volumen;
+                }
+
 		return  Yaml::dump($rtr, 5, 2);
 	}
 
         function getServices(){ return $this->services; }
+	
+	function getVolumes(){ return $this->volumes; }
 }
+
+class Volumes {
+    protected $config = [];
+    
+    /**
+     * @param string $name Name of volumen.
+     * @param string $driver Driver type. By default use 'local'
+     * @return Volumes Return this object.
+     */ 
+    public function addVolumen($name, $driver = 'local') {
+        $this->config[$name]['driver'] = $driver;
+        return $this;
+    }
+
+    /**
+     * @return array Return array with config.
+     */ 
+    public function getConfig() {
+        return $this->config;
+    }
+}
+
 
 
